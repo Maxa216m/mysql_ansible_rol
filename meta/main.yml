@@ -1,0 +1,14 @@
+galaxy_info:
+  author: "Maxime."
+  description: "Ansible role to install mysql"
+  company: "Windesheim"
+  license: "MIT"
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "20.04"
+        - "22.04"
+  galaxy_tags:
+    - mysql
+dependencies: []

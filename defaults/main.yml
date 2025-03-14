@@ -1,0 +1,6 @@
+---
+mysql_pkg: mysql-server
+mysql_service: mysql
+mysql_db_user: example_user
+mysql_db_password: example_password
+

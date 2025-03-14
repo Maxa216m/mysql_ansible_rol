@@ -1,0 +1,44 @@
+---
+- name: Installeer MySQL-server
+  become: true
+  apt:
+    name: "{{ mysql_pkg }}"
+    state: present
+    update_cache: yes
+  notify: Restart MySQL
+  register: mysql_install_result
+
+- name: Installeer MySQL Python module (PyMySQL)
+  become: true
+  apt:
+    name: python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Zorg dat MySQL gestart en enabled is
+  become: true
+  service:
+    name: "{{ mysql_service }}"
+    state: started
+    enabled: yes
+
+- name: Maak de beheerder gebruiker aan ({{ mysql_db_user }}) met wachtwoordauthenticatie
+  become: true
+  mysql_user:
+    name: "{{ mysql_db_user }}"
+    password: "{{ mysql_db_password }}"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Controleer of MySQL draait
+  command: systemctl is-active {{ mysql_service }}
+  register: mysql_active
+  changed_when: false
+  failed_when: mysql_active.stdout.strip() != "active"
+
+- name: Debug MySQL configuratie resultaat
+  debug:
+    msg: "MySQL is geïnstalleerd en de gebruiker {{ mysql_db_user }} is aangemaakt."
+  when: mysql_active.stdout.strip() == "active"
